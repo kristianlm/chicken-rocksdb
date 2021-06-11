@@ -80,10 +80,10 @@
 
 (define (rocksdb-open name #!key
                       (finalize #t)
-                      (read_only #f)
+                      (read-only #f)
                       (compression 'lz4)
-                      (create_if_missing #t)
-                      (paranoid_checks #f))
+                      (create-if-missing #t)
+                      (paranoid-checks #f))
   (let* ((open* (foreign-lambda* rocksdb ((c-string name)
                                           (bool read_only)
                                           ;; options
@@ -107,10 +107,10 @@ return(db);
 "))
          (db (call-with-errptr
               (cut open* name
-                   read_only
+                   read-only
                    (<->compression compression)
-                   create_if_missing
-                   paranoid_checks
+                   create-if-missing
+                   paranoid-checks
                    <>))))
     (when finalize (set-finalizer! db rocksdb-close))
     db))
@@ -150,15 +150,15 @@ rocksdb_writeoptions_destroy(o);
                           (finalize #t)
                           (seek #f)
                           ;; ==================== options ====================
-                          (verify_checksums #t)
-                          (fill_cache #t)
+                          (verify-checksums #t)
+                          (fill-cache #t)
                           ;; snapshot
-                          ;; key, size_t keylen iterate_upper_bound
-                          (read_tier 0)
+                          ;; key, size_t keylen iterate-upper-bound
+                          (read-tier 0)
                           (tailing #f)
-                          (readahead_size 0) ;; <-- default 8k, then 256k I think
-                          pin_data
-                          total_order_seek)
+                          (readahead-size 0) ;; <-- defaults to 8k, I think
+                          pin-data
+                          total-order-seek)
   (let* ((iterator*
           (foreign-lambda* rocksdb-iterator ((rocksdb db)
                                              (bool verify_checksums)
@@ -192,15 +192,15 @@ return(it);
           (call-with-errptr
            (cut iterator*
                 db
-                verify_checksums
-                fill_cache
+                verify-checksums
+                fill-cache
                 ;; snapshot
-                ;; key, size_t keylen iterate_upper_bound
-                read_tier
+                ;; key, size_t keylen iterate-upper-bound
+                read-tier
                 tailing
-                readahead_size
-                pin_data
-                total_order_seek
+                readahead-size
+                pin-data
+                total-order-seek
                 <>))))
     (when finalize (set-finalizer! it rocksdb-iter-destroy))
     (when seek

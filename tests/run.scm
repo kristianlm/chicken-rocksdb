@@ -6,7 +6,7 @@
 (test-group
  "rocksdb-open"
 
- (test-error (rocksdb-open "testdb" create_if_missing: #f))
+ (test-error (rocksdb-open "testdb" create-if-missing: #f))
 
  (define db (rocksdb-open "testdb"))
  (test #t (rocksdb-t? db))
