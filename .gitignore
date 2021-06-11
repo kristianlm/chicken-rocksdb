@@ -1,0 +1,8 @@
+/rocksdb.build.sh
+/rocksdb.import.scm
+/rocksdb.import.so
+/rocksdb.install.sh
+/rocksdb.link
+/rocksdb.so
+/rocksdb.static.o
+/tests/testdb/

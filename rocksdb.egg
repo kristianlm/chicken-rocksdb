@@ -1,0 +1,8 @@
+;; -*- scheme -*-
+((author "Kristian Lein-Mathisen")
+ (dependencies)
+ (test-dependencies test)
+ (components (extension rocksdb
+                        (source "rocksdb-module.scm")
+                        (source-dependencies "rocksdb.scm")
+                        (link-options "-L" "-lrocksdb"))))
