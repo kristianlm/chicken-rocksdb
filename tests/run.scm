@@ -54,6 +54,11 @@
    (put wb "from" "")
    (put wb "wb" "")
 
-   )))
+   ))
+
+ (test-group
+  "compaction range"
+  (rocksdb-compact-range db "a" "b")
+  (rocksdb-compact-range db #f #f)))
 
 

@@ -12,7 +12,9 @@
                  rocksdb-writebatch
                  rocksdb-writebatch-put
                  rocksdb-writebatch-clear
-                 rocksdb-write)
+                 rocksdb-write
+
+                 rocksdb-compact-range)
 (import scheme chicken.base)
 (include "rocksdb.scm")
 )

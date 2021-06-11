@@ -275,3 +275,30 @@ rocksdb_writeoptions_destroy(o);
     (call-with-errptr
      (cut write* db writebatch sync WAL <>))))
 
+;; ==================== compaction_range ====================
+
+
+(define (rocksdb-compact-range db start limit #!key
+                               exclusive
+                               change-level
+                               (target-level 0))
+   ((foreign-lambda* void ((rocksdb db)
+                          (scheme-pointer start)
+                          (size_t start_len)
+                          (scheme-pointer limit)
+                          (size_t limit_len)
+                          (bool exclusive)
+                          (bool change_level)
+                          (int target_level)
+                          ) "
+rocksdb_compactoptions_t *o = rocksdb_compactoptions_create();
+rocksdb_compactoptions_set_exclusive_manual_compaction(o, exclusive);
+rocksdb_compactoptions_set_change_level(o, change_level);
+rocksdb_compactoptions_set_target_level(o, target_level);
+rocksdb_compact_range_opt(db, o, start, start_len, limit, limit_len);
+rocksdb_compactoptions_destroy(o);
+")
+   db
+   start (if start (number-of-bytes start) 0)
+   limit (if limit (number-of-bytes limit) 0)
+   exclusive change-level target-level))
