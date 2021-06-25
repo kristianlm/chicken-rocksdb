@@ -53,12 +53,13 @@
    (define wb (rocksdb-writebatch))
    (test #t (rocksdb-writebatch-t? wb))
 
-   (put wb "hello" "")
-   (put wb "from" "")
-   (put wb "wb" "")
+   (put wb "a" "A wb")
+   (put wb "b" "B wb")
+   (put wb "c" "C wb")
+   (rocksdb-write db wb)
 
+   (test "wb write" "A wb" (rocksdb-iter-value (rocksdb-iterator db seek: 'first)))
    (test "explicit call to rocksdb-writebatch-destroy" (begin) (rocksdb-writebatch-destroy wb))
-
    ))
 
  (test-group
