@@ -55,6 +55,8 @@
    (put wb "from" "")
    (put wb "wb" "")
 
+   (test "explicit call to rocksdb-writebatch-destroy" (begin) (rocksdb-writebatch-destroy wb))
+
    ))
 
  (test-group

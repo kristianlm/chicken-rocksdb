@@ -241,9 +241,10 @@ return(it);
 ;; ==================== writebatch ====================
 
 (define (rocksdb-writebatch-destroy writebatch)
-  ((foreign-lambda void "rocksdb_writebatch_destroy" rocksdb-writebatch)
-   writebatch)
-  (rocksdb-writebatch-t-pointer-set! writebatch #f))
+  (when (rocksdb-writebatch-t-pointer writebatch)
+    ((foreign-lambda void "rocksdb_writebatch_destroy" rocksdb-writebatch)
+     writebatch)
+    (rocksdb-writebatch-t-pointer-set! writebatch #f)))
 
 (define rocksdb-writebatch-clear   (foreign-lambda void "rocksdb_writebatch_clear" rocksdb-writebatch))
 

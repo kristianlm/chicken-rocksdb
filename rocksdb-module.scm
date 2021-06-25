@@ -13,6 +13,7 @@
                  rocksdb-writebatch
                  rocksdb-writebatch-put
                  rocksdb-writebatch-clear
+                 rocksdb-writebatch-destroy
                  rocksdb-write
 
                  rocksdb-compact-range)
