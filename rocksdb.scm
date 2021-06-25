@@ -76,7 +76,8 @@
            (lz4hc  . ,(foreign-value "rocksdb_lz4hc_compression" int))
            (xpress . ,(foreign-value "rocksdb_xpress_compression" int))
            (zstd   . ,(foreign-value "rocksdb_zstd_compression" int)))))
-    (alist-ref compression alst)))
+    (or (alist-ref compression alst)
+        (error (conc "compression not found in " (map car alst)) compression))))
 
 (define (rocksdb-open name #!key
                       (finalize #t)
