@@ -1,20 +1,20 @@
 (import test rocksdb chicken.file chicken.port)
 
-(if (directory-exists? "testdb")
-    (delete-directory "testdb" #t))
+(if (directory-exists? "test.rocks")
+    (delete-directory "test.rocks" #t))
 
 (test-group
  "rocksdb-open"
 
- (test-error (rocksdb-open "testdb" create-if-missing: #f))
+ (test-error (rocksdb-open "test.rocks" create-if-missing: #f))
 
- (define db (rocksdb-open "testdb"))
+ (define db (rocksdb-open "test.rocks"))
  (test #t (rocksdb-t? db))
  (test "rocksdb-close is idempotent" (void) (rocksdb-close db))
  (test "rocksdb-close is idempotent" (void) (rocksdb-close db))
 
- (define db (rocksdb-open "testdb"))
- 
+ (define db (rocksdb-open "test.rocks"))
+
  (rocksdb-put db "a" "1")
  (rocksdb-put db "b" "2")
  (rocksdb-put db "c" "3")
@@ -74,5 +74,3 @@
   "compaction range"
   (rocksdb-compact-range db "a" "b")
   (rocksdb-compact-range db #f #f)))
-
-
