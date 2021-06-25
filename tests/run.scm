@@ -60,6 +60,17 @@
    ))
 
  (test-group
+  "tailing"
+  (define it (rocksdb-iterator db tailing: #t))
+  (rocksdb-iter-seek-to-first it)
+  (test "a" (rocksdb-iter-key it))
+  (test "1" (rocksdb-iter-value it))
+  (rocksdb-put db "!" "post-iterator entry")
+  (rocksdb-iter-seek-to-first it)
+  (test "!" (rocksdb-iter-key it))
+  (test "post-iterator entry" (rocksdb-iter-value it)))
+
+ (test-group
   "compaction range"
   (rocksdb-compact-range db "a" "b")
   (rocksdb-compact-range db #f #f)))
