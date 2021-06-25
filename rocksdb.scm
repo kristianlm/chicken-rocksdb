@@ -210,7 +210,7 @@ return(it);
 
 (define rocksdb-iter-valid?        (foreign-lambda bool "rocksdb_iter_valid" rocksdb-iterator))
 (define rocksdb-iter-seek-to-first (foreign-lambda void "rocksdb_iter_seek_to_first" rocksdb-iterator))
-(define rocksdb-iter-seek-to-last  (foreign-lambda void "rocksdb_iter_seek_to_first" rocksdb-iterator))
+(define rocksdb-iter-seek-to-last  (foreign-lambda void "rocksdb_iter_seek_to_last" rocksdb-iterator))
 (define rocksdb-iter-next*         (foreign-lambda void "rocksdb_iter_next" rocksdb-iterator))
 (define rocksdb-iter-prev*         (foreign-lambda void "rocksdb_iter_prev" rocksdb-iterator))
 
