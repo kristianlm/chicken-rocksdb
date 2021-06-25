@@ -1,5 +1,9 @@
 ;; -*- scheme -*-
 ((author "Kristian Lein-Mathisen")
+ (synopsis "Bindings to Facebooks's RocksDB Key-Value Store")
+ (version "1.0")
+ (license "BSD")
+ (category db)
  (dependencies)
  (test-dependencies test)
  (components (extension rocksdb
