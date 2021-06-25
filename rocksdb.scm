@@ -118,18 +118,18 @@ return(db);
 
 (define (rocksdb-put db key value #!key
                      (sync #f)
-                     (WAL #t))
+                     (wal #t))
   (let* ((put* (foreign-lambda* void ((rocksdb db)
                                       (scheme-pointer key)
                                       (size_t keylen)
                                       (scheme-pointer value)
                                       (size_t vallen)
                                       (bool sync)
-                                      (bool WAL)
+                                      (bool wal)
                                       ((c-pointer c-string) errptr)) "
 rocksdb_writeoptions_t *o = rocksdb_writeoptions_create();
 rocksdb_writeoptions_set_sync(o, sync);
-rocksdb_writeoptions_disable_WAL(o, !WAL);
+rocksdb_writeoptions_disable_WAL(o, !wal);
 rocksdb_put(db, o, key, keylen, value, vallen, errptr);
 rocksdb_writeoptions_destroy(o);
 ")))
@@ -139,7 +139,7 @@ rocksdb_writeoptions_destroy(o);
           key   (number-of-bytes key)
           value (number-of-bytes value)
           sync
-          WAL
+          wal
           <>))))
 
 (define (rocksdb-iter-destroy it)
@@ -261,20 +261,20 @@ return(it);
 
 (define (rocksdb-write db writebatch #!key
                        (sync #f)
-                       (WAL #t))
+                       (wal #t))
   (let* ((write* (foreign-lambda* void ((rocksdb db)
                                         (rocksdb-writebatch writebatch)
                                         (bool sync)
-                                        (bool WAL)
+                                        (bool wal)
                                         ((c-pointer c-string) errptr)) "
 rocksdb_writeoptions_t *o = rocksdb_writeoptions_create();
 rocksdb_writeoptions_set_sync(o, sync);
-rocksdb_writeoptions_disable_WAL(o, !WAL);
+rocksdb_writeoptions_disable_WAL(o, !wal);
 rocksdb_write(db, o, writebatch, errptr);
 rocksdb_writeoptions_destroy(o);
 ")))
     (call-with-errptr
-     (cut write* db writebatch sync WAL <>))))
+     (cut write* db writebatch sync wal <>))))
 
 ;; ==================== compaction_range ====================
 
