@@ -2,6 +2,7 @@
         chicken.gc
         chicken.condition
         (only chicken.string conc)
+        (only chicken.blob blob?)
         (only chicken.memory move-memory! free)
         (only chicken.memory.representation number-of-bytes))
 
@@ -204,11 +205,7 @@ return(it);
                 total-order-seek
                 <>))))
     (when finalizer (set-finalizer! it finalizer))
-    (when seek
-      (cond ((equal? seek 0) (rocksdb-iter-seek-to-first it))
-            ((equal? seek 1) (rocksdb-iter-seek-to-last it))
-            ((string? seek) (rocksdb-iter-seek it seek))
-            (else (error "unknown seek value (expecting 0/1 for first/last or string), got: " seek))))
+    (when seek      (rocksdb-iter-seek it seek))
     it))
 
 (define rocksdb-iter-valid?        (foreign-lambda bool "rocksdb_iter_valid" rocksdb-iterator))
@@ -217,9 +214,16 @@ return(it);
 (define rocksdb-iter-next*         (foreign-lambda void "rocksdb_iter_next" rocksdb-iterator))
 (define rocksdb-iter-prev*         (foreign-lambda void "rocksdb_iter_prev" rocksdb-iterator))
 
-(define (rocksdb-iter-seek it key)
+(define (rocksdb-iter-seek* it key)
   ((foreign-lambda void "rocksdb_iter_seek" rocksdb-iterator scheme-pointer size_t)
    it key (number-of-bytes key)))
+
+(define (rocksdb-iter-seek it key)
+  (cond ((string? key)       (rocksdb-iter-seek* it key))
+        ((blob? key)         (rocksdb-iter-seek* it key))
+        ((equal? key 'first) (rocksdb-iter-seek-to-first it))
+        ((equal? key 'last)  (rocksdb-iter-seek-to-last it))
+        (else (error "unknown seek value (expecting 'first/'last or string/blob), got: " key))))
 
 (define (rocksdb-iter-key* it)
   (let-location ((len size_t))

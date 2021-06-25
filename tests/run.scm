@@ -25,18 +25,20 @@
   (define it (rocksdb-iterator db))
   (test #t (rocksdb-iterator-t? it))
   (test #f (rocksdb-iter-valid? it))
+
+  (rocksdb-iter-seek it 'first)
+  (test "a" (rocksdb-iter-key it)) (test "1" (rocksdb-iter-value it))
   
-  (rocksdb-iter-seek-to-first it)  (test #t (rocksdb-iter-valid? it)) (test "a" (rocksdb-iter-key it)) (test "1" (rocksdb-iter-value it))
-  (rocksdb-iter-next it)           (test #t (rocksdb-iter-valid? it)) (test "b" (rocksdb-iter-key it)) (test "2" (rocksdb-iter-value it))
-  (rocksdb-iter-seek it "c")       (test #t (rocksdb-iter-valid? it)) (test "c" (rocksdb-iter-key it)) (test "3" (rocksdb-iter-value it))
+  (rocksdb-iter-next it)       (test "next" "b" (rocksdb-iter-key it))
+  (rocksdb-iter-seek it "c")   (test "seek" "c" (rocksdb-iter-key it))
+  (rocksdb-iter-prev it)       (test "prev" "b" (rocksdb-iter-key it))
+  (rocksdb-iter-seek it 'last) (test "last" "c" (rocksdb-iter-key it))
 
   (test "#<rocksdb-iterator-t \"c\">" (with-output-to-string (lambda () (display it))))
   (rocksdb-iter-next it)
-  (test #f (rocksdb-iter-valid? it))
-
-  (rocksdb-iter-seek it "a") (test "a" (rocksdb-iter-key it))
-  (rocksdb-iter-prev it)
-  (test #f (rocksdb-iter-valid? it))
+  (test "invalid it after \"c\"" #f (rocksdb-iter-valid? it))
+  (test "no key"   #f (rocksdb-iter-key it))
+  (test "no value" #f (rocksdb-iter-value it))
 
   (test-group
    "rocksdb-iterator args"
@@ -62,11 +64,9 @@
  (test-group
   "tailing"
   (define it (rocksdb-iterator db tailing: #t))
-  (rocksdb-iter-seek-to-first it)
-  (test "a" (rocksdb-iter-key it))
-  (test "1" (rocksdb-iter-value it))
+  (rocksdb-iter-seek it 'first)
   (rocksdb-put db "!" "post-iterator entry")
-  (rocksdb-iter-seek-to-first it)
+  (rocksdb-iter-seek it 'first)
   (test "!" (rocksdb-iter-key it))
   (test "post-iterator entry" (rocksdb-iter-value it)))
 
