@@ -41,7 +41,8 @@
   (test-group
    "rocksdb-iterator args"
    (define it (rocksdb-iterator db seek: "b"))
-   (test "b" (rocksdb-iter-key it)))
+   (test "b" (rocksdb-iter-key it))
+   (test "explicitly destroyable" (begin) (rocksdb-iter-destroy it)))
 
   (test-group
    "rocksdb writebatch"

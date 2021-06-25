@@ -7,6 +7,7 @@
                  rocksdb-iter-seek-to-first    rocksdb-iter-seek-to-last       rocksdb-iter-seek
                  rocksdb-iter-next             rocksdb-iter-prev
                  rocksdb-iter-key              rocksdb-iter-value
+                 rocksdb-iter-destroy
 
                  rocksdb-writebatch-t?
                  rocksdb-writebatch
