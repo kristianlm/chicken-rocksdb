@@ -7,6 +7,7 @@
                  rocksdb-iter-seek-to-first    rocksdb-iter-seek-to-last       rocksdb-iter-seek
                  rocksdb-iter-next             rocksdb-iter-prev
                  rocksdb-iter-key              rocksdb-iter-value
+
                  rocksdb-iter-destroy
 
                  rocksdb-writebatch-t?
@@ -16,7 +17,12 @@
                  rocksdb-writebatch-destroy
                  rocksdb-write
 
-                 rocksdb-compact-range)
+                 rocksdb-compact-range
+
+                 ;; ========== unofficial, in case I've got all this wrong:
+                 rocksdb-iter-next*            rocksdb-iter-prev*
+                 rocksdb-iter-key*             rocksdb-iter-value*
+                 )
 (import scheme chicken.base)
 (include "rocksdb.scm")
 )

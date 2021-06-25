@@ -25,7 +25,7 @@
   (lambda (it port)
     (display "#<rocksdb-iterator-t" port)
     (if (rocksdb-iter-valid? it)
-        (let* ((key (rocksdb-iter-key it))
+        (let* ((key (rocksdb-iter-key* it))
                (len (string-length key))
                (key (if (> len 32)
                         (conc (substring key 0 32) "…")
@@ -214,14 +214,14 @@ return(it);
 (define rocksdb-iter-valid?        (foreign-lambda bool "rocksdb_iter_valid" rocksdb-iterator))
 (define rocksdb-iter-seek-to-first (foreign-lambda void "rocksdb_iter_seek_to_first" rocksdb-iterator))
 (define rocksdb-iter-seek-to-last  (foreign-lambda void "rocksdb_iter_seek_to_first" rocksdb-iterator))
-(define rocksdb-iter-next          (foreign-lambda void "rocksdb_iter_next" rocksdb-iterator))
-(define rocksdb-iter-prev          (foreign-lambda void "rocksdb_iter_prev" rocksdb-iterator))
+(define rocksdb-iter-next*         (foreign-lambda void "rocksdb_iter_next" rocksdb-iterator))
+(define rocksdb-iter-prev*         (foreign-lambda void "rocksdb_iter_prev" rocksdb-iterator))
 
 (define (rocksdb-iter-seek it key)
   ((foreign-lambda void "rocksdb_iter_seek" rocksdb-iterator scheme-pointer size_t)
    it key (number-of-bytes key)))
 
-(define (rocksdb-iter-key it)
+(define (rocksdb-iter-key* it)
   (let-location ((len size_t))
     (let ((str* ((foreign-lambda (c-pointer char) "rocksdb_iter_key" rocksdb-iterator (c-pointer size_t))
                  it (location len)))
@@ -229,13 +229,31 @@ return(it);
       (move-memory! str* str len)
       str)))
 
-(define (rocksdb-iter-value it)
+(define (rocksdb-iter-value* it)
   (let-location ((len size_t))
     (let ((str* ((foreign-lambda (c-pointer char) "rocksdb_iter_value" rocksdb-iterator (c-pointer size_t))
                  it (location len)))
           (str (make-string len)))
       (move-memory! str* str len)
       str)))
+
+;; safe variants of the above. you'll get segfaults when you do
+;; rocksdb-iter-key* when rocksdb-iter-valid? is #f
+(define (rocksdb-iter-next it)
+  (and (rocksdb-iter-valid? it)
+       (rocksdb-iter-next* it)))
+
+(define (rocksdb-iter-prev it)
+  (and (rocksdb-iter-valid? it)
+       (rocksdb-iter-prev* it)))
+
+(define (rocksdb-iter-key it)
+  (and (rocksdb-iter-valid? it)
+       (rocksdb-iter-key* it)))
+
+(define (rocksdb-iter-value it)
+  (and (rocksdb-iter-valid? it)
+       (rocksdb-iter-value* it)))
 
 
 ;; ==================== writebatch ====================
