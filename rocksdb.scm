@@ -80,7 +80,7 @@
         (error (conc "compression not found in " (map car alst)) compression))))
 
 (define (rocksdb-open name #!key
-                      (finalize #t)
+                      (finalizer rocksdb-close)
                       (read-only #f)
                       (compression 'lz4)
                       (create-if-missing #t)
@@ -113,7 +113,7 @@ return(db);
                    create-if-missing
                    paranoid-checks
                    <>))))
-    (when finalize (set-finalizer! db rocksdb-close))
+    (when finalizer (set-finalizer! db finalizer))
     db))
 
 (define (rocksdb-put db key value #!key
@@ -148,7 +148,7 @@ rocksdb_writeoptions_destroy(o);
     (rocksdb-iterator-t-pointer-set! it #f)))
 
 (define (rocksdb-iterator db #!key
-                          (finalize #t)
+                          (finalizer rocksdb-iter-destroy)
                           (seek #f)
                           ;; ==================== options ====================
                           (verify-checksums #t)
@@ -203,7 +203,7 @@ return(it);
                 pin-data
                 total-order-seek
                 <>))))
-    (when finalize (set-finalizer! it rocksdb-iter-destroy))
+    (when finalizer (set-finalizer! it finalizer))
     (when seek
       (cond ((equal? seek 0) (rocksdb-iter-seek-to-first it))
             ((equal? seek 1) (rocksdb-iter-seek-to-last it))
@@ -247,10 +247,9 @@ return(it);
 
 (define rocksdb-writebatch-clear   (foreign-lambda void "rocksdb_writebatch_clear" rocksdb-writebatch))
 
-(define (rocksdb-writebatch #!key (finalize #t))
+(define (rocksdb-writebatch #!key (finalizer rocksdb-writebatch-destroy))
   (let ((wb ((foreign-lambda rocksdb-writebatch "rocksdb_writebatch_create"))))
-    (when finalize
-      (set-finalizer! wb rocksdb-writebatch-destroy))
+    (when finalizer (set-finalizer! wb finalizer))
     wb))
 
 (define (rocksdb-writebatch-put writebatch key value) ;;                            key       keylen      value     vallen
