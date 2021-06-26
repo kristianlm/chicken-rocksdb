@@ -162,7 +162,7 @@ for usages of the remainding keyword arguments.
 (rocksdb-put db "key1" "value1")
 (rocksdb-put db "key2" "value2")
 
-(define it (rocksdb-iterator db seek: 0))
+(define it (rocksdb-iterator db seek: 'first))
 (let loop ()
   (when (rocksdb-iter-valid? it)
     (print (rocksdb-iter-key it) "\t" (rocksdb-iter-value it))
